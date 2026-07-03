@@ -41,13 +41,41 @@ tasks, presence, and the activity feed sync live.
 
 ## Run it
 
-**Prerequisites:** a running self-hosted Supabase stack (Docker) reachable at
-`http://localhost:8000`, plus Node 18+.
+**Prerequisites:** Docker (for Supabase) and Node 18+.
+
+### 1. Start Supabase (self-hosted stack)
+
+The full self-hosting Docker stack is included in [`supabase/`](./supabase).
+
+```bash
+cd supabase
+cp .env.example .env       # default local demo secrets
+docker compose up -d       # brings up db, auth, rest, realtime, storage, studio, kong
+```
+
+This exposes the API/Kong gateway on `http://localhost:8000` and Studio on the
+same URL. For a login flow that works without an email server, set these in
+`supabase/.env` before starting (or edit and restart the `auth` service):
+
+```
+ENABLE_ANONYMOUS_USERS=true
+ENABLE_EMAIL_AUTOCONFIRM=true
+```
+
+### 2. Load the app schema
+
+From the repository root (where `schema.sql` lives):
+
+```bash
+docker exec -i supabase-db psql -U postgres -d postgres < schema.sql
+```
+
+### 3. Run the app
 
 ```bash
 npm install
-cp .env.example .env      # local Supabase URL + public demo anon key
-npm run dev               # http://localhost:5173
+cp .env.example .env       # local Supabase URL + public demo anon key
+npm run dev                # http://localhost:5173
 ```
 
 Config lives in `.env` (`VITE_SUPABASE_URL` → the Kong gateway on `:8000`, plus
