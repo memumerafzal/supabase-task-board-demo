@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supabase Task Board — Demo</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- Login overlay (Supabase Auth) -->
+    <div id="login" class="login">
+      <form class="login-card" onsubmit="return false">
+        <div class="login-brand"><span class="logo">✅</span> Task Board</div>
+        <p class="login-sub">Sign in to the shared board — powered by <strong>Supabase Auth</strong></p>
+        <input id="email" type="email" placeholder="you@example.com" autocomplete="username" />
+        <input id="password" type="password" placeholder="password (min 6 chars)" autocomplete="current-password" />
+        <div class="login-row">
+          <button id="btn-signin" type="button" class="primary">Sign in</button>
+          <button id="btn-signup" type="button">Sign up</button>
+        </div>
+        <div class="or"><span>or</span></div>
+        <button id="btn-guest" type="button" class="guest">Continue as guest</button>
+        <div id="login-error" class="login-error"></div>
+      </form>
+    </div>
+
+    <!-- App -->
+    <div id="app" style="display:none">
+      <header class="topbar">
+        <div class="brand">
+          <span class="logo">✅</span>
+          <div>
+            <h1>Task Board</h1>
+            <p class="subtitle">Realtime demo powered by <strong>Supabase</strong></p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Presence: who's online -->
+          <div class="presence" id="presence" title="People viewing this board"></div>
+
+          <!-- Stats via Postgres RPC -->
+          <div class="stats">
+            <div class="ring" id="ring" style="--pct:0"><span id="ring-pct">0%</span></div>
+            <div class="stat-nums">
+              <div><span id="stat-done">0</span> done</div>
+              <div class="muted"><span id="stat-total">0</span> total</div>
+            </div>
+          </div>
+
+          <!-- Connection -->
+          <div class="conn">
+            <span class="dot" id="conn-dot"></span>
+            <span id="conn-text">connecting…</span>
+          </div>
+
+          <!-- User -->
+          <div class="user">
+            <span class="user-badge" id="user-badge">?</span>
+            <span class="user-name" id="user-name"></span>
+            <button id="btn-signout" title="Sign out">Sign out</button>
+          </div>
+        </div>
+      </header>
+
+      <form id="new-task" class="new-task">
+        <input id="title" type="text" placeholder="Add a task…" maxlength="200" autocomplete="off" required />
+        <select id="priority" title="Priority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+        <button type="submit">Add</button>
+      </form>
+
+      <div class="layout">
+        <main class="board" id="board">
+          <section class="column" data-status="todo">
+            <h2>To&nbsp;Do <span class="count" data-count="todo">0</span></h2>
+            <div class="cards" data-drop="todo"></div>
+          </section>
+          <section class="column" data-status="doing">
+            <h2>Doing <span class="count" data-count="doing">0</span></h2>
+            <div class="cards" data-drop="doing"></div>
+          </section>
+          <section class="column" data-status="done">
+            <h2>Done <span class="count" data-count="done">0</span></h2>
+            <div class="cards" data-drop="done"></div>
+          </section>
+        </main>
+
+        <!-- Activity feed (activity_log table + DB trigger, streamed live) -->
+        <aside class="activity">
+          <h3>Activity</h3>
+          <ul id="activity-list" class="activity-list"></ul>
+        </aside>
+      </div>
+
+      <footer class="foot">
+        <span id="status-line">Loading…</span>
+        <span class="hint">Open in two tabs/accounts — tasks, presence &amp; activity sync live.</span>
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
